@@ -1,0 +1,3 @@
+build/
+reportes/*.csv
+.context/
