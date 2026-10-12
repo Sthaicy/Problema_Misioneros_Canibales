@@ -8,48 +8,7 @@ Incluye una **interfaz gráfica en consola (ASCII con colores ANSI)** con animac
 
 ---
 
-## 📋 1. Descripción del Problema
-
-Tres misioneros (**M**) y tres caníbales (**C**) están en la orilla izquierda de un río y desean cruzar a la orilla derecha utilizando una barca (**B**) que puede transportar como máximo a **dos personas** a la vez. La barca no puede cruzar vacía; debe haber al menos una persona a bordo para remar.
-
-### ⚠️ Restricción Crítica:
-En ninguna orilla el número de caníbales puede superar al de misioneros si hay al menos un misionero presente, de lo contrario los caníbales se comerían a los misioneros:
-* **Orilla Izquierda:** Si $M_{izq} > 0 \implies C_{izq} \le M_{izq}$
-* **Orilla Derecha:** Si $M_{der} > 0 \implies C_{der} \le M_{der}$
-
-### 🎯 Definición Formal del Espacio de Estados:
-* **Estado:** Tríada $(M, C, B)$, donde:
-  * $M \in \{0, 1, 2, 3\}$: Misioneros en la orilla izquierda.
-  * $C \in \{0, 1, 2, 3\}$: Caníbales en la orilla izquierda.
-  * $B \in \{1, 0\}$: Posición de la barca ($1 =$ izquierda, $0 =$ derecha).
-  *(Los valores en la orilla derecha son implícitos: $3 - M$ y $3 - C$)*.
-* **Estado Inicial:** $(3, 3, 1)$ — Todos en la orilla izquierda.
-* **Estado Meta:** $(0, 0, 0)$ — Todos en la orilla derecha.
-* **Acciones Posibles:** Cruzar con 1 o 2 personas: $(1, 0)$, $(0, 1)$, $(2, 0)$, $(0, 2)$, $(1, 1)$.
-* **Costo de la Solución Óptima:** **11 cruces** (profundidad 11).
-
----
-
-## 🧠 2. Las Dos Metodologías de Búsqueda
-
-| Metodología | Tipo | Algoritmo | Función de Evaluación / Estrategia | Garantías |
-| :--- | :--- | :--- | :--- | :--- |
-| **Metodología 1** | No Informada (Ciega) | **BFS** | Explora por niveles con cola FIFO. Test de meta al generar. | Completo y óptimo en número de pasos para costos uniformes. |
-| **Metodología 2** | Informada (Heurística) | **A\*** | Minimiza $f(n) = g(n) + h(n)$ usando min-heap. Test de meta al expandir. | Óptimo y completo si $h(n)$ es admisible y consistente. |
-
-### 🔍 Heurísticas implementadas para A\*:
-1. **Heurística Simple ($h_{simple}$):**
-   $$h(e) = \left\lceil \frac{M + C}{2} \right\rceil$$
-   Calcula la cantidad mínima de viajes considerando que la barca lleva a lo sumo 2 personas. Es admisible pero optimista, ya que no contempla que alguien debe regresar en la barca ni las restricciones de seguridad.
-2. **Heurística Mejorada ($h_{mejorada}$):**
-   Toma en cuenta los viajes de ida y vuelta requeridos para trasladar a $n = M + C$ personas con capacidad 2.
-   * Si la barca está a la izquierda ($B=1$): si $n \le 2$ requiere 1 viaje; si $n > 2$ requiere al menos $2n - 3$ cruces.
-   * Si la barca está a la derecha ($B=0$): alguien debe regresar primero con la barca.
-   * Es una heurística más informada ($h_{mejorada}(n) \ge h_{simple}(n)$) que poda significativamente el espacio de búsqueda expandiendo menos nodos.
-
----
-
-## 📁 3. Estructura del Proyecto
+## 📁 1. Estructura del Proyecto
 
 El código está organizado siguiendo buenas prácticas de separación modular en C++:
 
@@ -88,7 +47,7 @@ Problema_Misioneros_Canibales/
 
 ---
 
-## 🛠️ 4. Requisitos y Compilación
+## 🛠️ 2. Requisitos y Compilación
 
 ### Requisitos:
 * Compilador de C++ con soporte para **C++17** (ej. `g++` 8+ en MinGW-w64, Clang o MSVC).
@@ -114,7 +73,7 @@ g++ -O2 -std=c++17 -Wall -Iinclude src/main.cpp src/core/estado.cpp src/ia/bfs.c
 
 ---
 
-## 🚀 5. Guía de Ejecución: Cómo ver y comparar las 2 Metodologías
+## 🚀 3. Guía de Ejecución: Cómo ver y comparar las 2 Metodologías
 
 ### Método A: Menú Interactivo (Recomendado)
 Ejecuta el programa sin argumentos:
@@ -159,21 +118,8 @@ El ejecutable cuenta con banderas para automatización, pruebas y visualización
 
 ---
 
-## 📊 6. Comparativa de Resultados y Métricas
 
-Al seleccionar la **Opción 4** del menú o ejecutar con la bandera `--todo`, obtendrás una tabla comparativa como la siguiente:
-
-```text
-============================================================================================
-EVALUACION COMPARATIVA (C++)
-============================================================================================
-Metodo               Costo  Prof.  Generados  Expandidos  Max.front.   Tiempo(ms)
-BFS                     11     11         31          13           8      0.01500
-A* (h simple)           11     11         31          13           8      0.02200
-A* (h mejorada)         11     11         23           9           5      0.01600
-```
-
-### 📈 Interpretación Pedagógica de las Métricas:
+### 📈 Interpretación de las Métricas:
 * **Costo (11) y Profundidad (11):** Todos los métodos encuentran la solución óptima de 11 cruces, demostrando la admisibilidad de las heurísticas y la propiedad de optimalidad de BFS y A\*.
 * **Nodos Expandidos y Generados:**
   * **BFS y A\* (h simple)** exploran una cantidad similar en este espacio pequeño.
@@ -183,7 +129,8 @@ A* (h mejorada)         11     11         23           9           5      0.0160
 
 ---
 
-## 🎨 7. Leyenda de la Animación en Consola
+----
+## 🎨 4. Leyenda de la Animación en Consola
 
 Durante la animación verás una representación en tiempo real del río:
 * 🔵 **M** (Azul): Misionero
